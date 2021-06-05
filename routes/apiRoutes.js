@@ -7,15 +7,38 @@ const writeFileAsync = util.promisify(fs.writeFile);
 
 router.get('/notes', (req, res) => {
     console.log('running');
-    readFileAsync('../note-taker/db/db.json', 'utf8')
-    .then(note => {
-        console.log(note);
-        return res.json(JSON.parse(note))
+    readFileAsync('./db/db.json', 'utf8')
+    .then(notes => {
+        console.log(notes);
+        return res.json(JSON.parse(notes))
     });
 })
 
-//router.post 
-//req.body.id = uuidv4();
+router.post('/notes', (req,res) => {
+    console.log(req.body);
+    // set req.body to a variable
+
+    const newNote = req.body
+    newNote.id = uuidv4();
+    // We need to fetch existing notes array
+    readFileAsync('./db/db.json', 'utf8')
+    .then(notes => {
+        console.log('notes inside post route', notes);
+        const parseNotes = JSON.parse(notes);
+        console.log(typeof parseNotes);
+        // We need to add the newNote to the existing notes array 
+        parseNotes.push(newNote);
+        console.log("parseNotes with new note: ", parseNotes);
+        // We need to write the updated array to the db file
+        // respond with the new note
+        writeFileAsync('./db/db.json', JSON.stringify(parseNotes));
+    })    
+    return res.send(newNote)
+    
+
+
+})
+//
 
 //router.delete
 
