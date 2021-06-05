@@ -34,12 +34,12 @@ router.post('/notes', (req,res) => {
         writeFileAsync('./db/db.json', JSON.stringify(parseNotes));
     })    
     return res.send(newNote)
-    
-
-
 })
-//
 
-//router.delete
+router.delete('/notes/:id', (req,res) => {
+    console.log("req.params:", req.params);
+    let deleteNote = parseInt(req.params.id);
+    console.log(req)
+})
 
 module.exports = router;
