@@ -31,15 +31,33 @@ router.post('/notes', (req,res) => {
         console.log("parseNotes with new note: ", parseNotes);
         // We need to write the updated array to the db file
         // respond with the new note
-        writeFileAsync('./db/db.json', JSON.stringify(parseNotes));
+        writeFileAsync('./db/db.json', JSON.stringify(parseNotes, null, 2));
     })    
     return res.send(newNote)
 })
 
 router.delete('/notes/:id', (req,res) => {
     console.log("req.params:", req.params);
-    let deleteNote = parseInt(req.params.id);
-    console.log(req)
+
+    fs.readFile("./db/db.json", (err, data) => {
+        if (err) {
+            console.log(err)
+        }
+        else {
+            console.log("notesArray", JSON.parse(data));
+            const notesArray = JSON.parse(data);
+
+            const filteredArray = notesArray.filter(item => item.id != req.params.id);
+
+            fs.writeFile("./db/db.json", JSON.stringify(filteredArray, null, 2), (err) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    res.json(filteredArray);
+                }
+            })
+        }
+    } ) 
 })
 
 module.exports = router;
